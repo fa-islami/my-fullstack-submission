@@ -50,16 +50,25 @@ const App = () => {
       number: newNumber,
     };
 
-    personsService.create(personObject).then((newPerson) => {
-      setPersons(persons.concat(newPerson));
-      setNewName("");
-      setNewNumber("");
-      setIsSucceed(true);
-      setMessage(`Added ${newPerson.name}`);
-      setTimeout(() => {
-        setMessage("");
-      }, 5000);
-    });
+    personsService
+      .create(personObject)
+      .then((newPerson) => {
+        setPersons(persons.concat(newPerson));
+        setNewName("");
+        setNewNumber("");
+        setIsSucceed(true);
+        setMessage(`Added ${newPerson.name}`);
+        setTimeout(() => {
+          setMessage("");
+        }, 5000);
+      })
+      .catch((err) => {
+        setIsSucceed(false);
+        setMessage(err.response.data.error);
+        setTimeout(() => {
+          setMessage("");
+        }, 5000);
+      });
   };
 
   const handleDelete = (id) => {
@@ -69,7 +78,7 @@ const App = () => {
     personsService
       .deletePerson(id)
       .then((updatedPersons) => {
-        setPersons(persons.filter((p) => p.id !== updatedPersons.id));
+        setPersons(persons.filter((p) => p.id !== id));
       })
       .catch((err) => {
         const deletedPerson = persons.find((person) => person.id === id);
@@ -83,6 +92,7 @@ const App = () => {
       });
   };
 
+  // CHANGE HANDLER
   const handleNameChange = (e) => {
     // console.log(e.target.value);
     setNewName(e.target.value);
